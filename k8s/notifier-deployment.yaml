@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifier
+spec:
+  selector:
+    matchLabels:
+      app: notifier
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: notifier
+    spec:
+      containers:
+        - name: notifier
+          image: husseingalal/go-notifier:latest
+          env:
+            - name: CHECK_INTERVAL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: CHECK_INTERVAL
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_HOST
+            - name: SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_PORT
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_USER
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: SMTP_PASS
