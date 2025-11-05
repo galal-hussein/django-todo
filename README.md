@@ -5,9 +5,21 @@ A simple todo app built with django
 ### Setup
 To get this repository, run the following command inside your git enabled terminal
 ```bash
-$ git clone https://github.com/shreys7/django-todo.git
+$ git clone https://github.com/galal-hussein/django-todo.git
 ```
 You will need django to be installed in you computer to run this app. Head over to https://www.djangoproject.com/download/ for the download guide
+
+
+### Mysql setup:
+
+```bash
+apt install mysql-server mysql-client
+mysql -u root
+create database todoapp;
+create user todo@'%' identified by 'todopass';
+grant all privileges on todoapp.* to 'todo'@'%';
+flush privileges;
+```
 
 Once you have downloaded django, go to the cloned repo directory and run the following command
 
@@ -23,6 +35,7 @@ $ python manage.py migrate
 ```
 
 One last step and then our todo App will be live. We need to create an admin user to run this App. On the terminal, type the following command and provide username, password and email for the admin user
+
 ```bash
 $ DJANGO_SUPERUSER_USERNAME=hussein -e DJANGO_SUPERUSER_EMAIL=test@gmail.com -e DJANGO_SUPERUSER_PASSWORD=test manage.py createsuperuser --noinput
 ```
