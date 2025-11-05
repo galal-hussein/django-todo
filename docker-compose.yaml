@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:latest
+    container_name: todo-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    container_name: todo-app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_pass
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+  notifier:
+    build:
+      context: ./notifier
+    container_name: todo-notifier
+    restart: always
+    env_file: ./notifier/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_pass
+volumes:
+  mysql_data:
