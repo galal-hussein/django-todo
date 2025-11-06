@@ -4,10 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/smtp"
 	"os"
 	"strings"
 	"time"
+
+	gomail "gopkg.in/mail.v2"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -66,14 +67,29 @@ func sendSummary(db *sql.DB, smtpServer, smtpPort, smtpUser, smtpPass, emailTo s
 		return
 	}
 
-	body := "Subject: Pending TODOs Reminder\r\n\r\n"
-	body += "Here are your pending tasks:\n\n" + strings.Join(todos, "\n")
+	body := "Here are your pending tasks:<br><br>" + strings.Join(todos, "<br>")
 
-	auth := smtp.PlainAuth("", smtpUser, smtpPass, smtpServer)
-	err = smtp.SendMail(fmt.Sprintf("%s:%s", smtpServer, smtpPort), auth, smtpUser, []string{emailTo}, []byte(body))
-	if err != nil {
-		log.Printf("Failed to send email: %v", err)
+	message := gomail.NewMessage()
+
+	// Set email headers
+	message.SetHeader("From", smtpUser)
+	message.SetHeader("To", emailTo)
+	message.SetHeader("Subject", "Unfinished TODO List"+time.Now().String())
+
+	// Set email body
+	message.SetBody("text/html", `
+        <html>
+            <body>
+               `+body+`
+            </body>
+        </html>
+    `)
+	// Set up the SMTP dialer
+	dialer := gomail.NewDialer(smtpServer, 587, smtpUser, smtpPass)
+
+	// Send the email
+	if err := dialer.DialAndSend(message); err != nil {
+		log.Printf("Failed to send message: %v", err)
 		return
 	}
-	log.Printf("Sent %d TODOs to %s", len(todos), emailTo)
 }

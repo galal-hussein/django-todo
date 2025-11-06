@@ -6,9 +6,9 @@ services:
     container_name: todo-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: todo
-      MYSQL_USER: todo_user
-      MYSQL_PASSWORD: todo_pass
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: todopass
       MYSQL_ROOT_PASSWORD: root_pass
     volumes:
       - mysql_data:/var/lib/mysql
@@ -29,9 +29,9 @@ services:
         condition: service_healthy
     environment:
       MYSQL_HOST: db
-      MYSQL_DATABASE: todo
-      MYSQL_USER: todo_user
-      MYSQL_PASSWORD: todo_pass
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: todopass
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_PASSWORD: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com
@@ -51,8 +51,8 @@ services:
         condition: service_healthy
     environment:
       MYSQL_HOST: db
-      MYSQL_DATABASE: todo
-      MYSQL_USER: todo_user
-      MYSQL_PASSWORD: todo_pass
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: todopass
 volumes:
   mysql_data:
